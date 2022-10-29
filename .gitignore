@@ -1,3 +1,4 @@
 .envs/.django
 .envs/.postgres
+/.idea
 /data
