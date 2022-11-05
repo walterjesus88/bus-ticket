@@ -12,3 +12,5 @@ _______
 docker-compose build
 docker-compose up -d
 ```
+
+5. python manage.py migrate authtoken
