@@ -155,7 +155,3 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 10,
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
 }
-
-SWAGGER_SETTINGS = {
-    "exclude_namespaces": ["users"],    #  List URL namespaces to ignore
-}
