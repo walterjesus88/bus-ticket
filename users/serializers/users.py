@@ -2,24 +2,30 @@
 from rest_framework import serializers
 from django.conf import settings
 from django.contrib.auth import password_validation,authenticate
+from users.serializers.profiles import ProfileModelSerializer
+
 #Models
-from users.models import User
+from users.models import User, Profile
 from rest_framework.authtoken.models import Token
 
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils import timezone
 from datetime import timedelta
+
 # Utilities
 import jwt
 class UserModelSerializer(serializers.ModelSerializer):
+    
+    profile = ProfileModelSerializer(read_only=True)
     class Meta:
         model= User
         fields = (
             'username',
             'first_name',
             'last_name',
-            'email'         
+            'email',
+            'profile'        
         )
 
 class UserSignUpSerializer(serializers.Serializer):
@@ -47,6 +53,7 @@ class UserSignUpSerializer(serializers.Serializer):
         data.pop('password_confirmation')
         user=User.objects.create_user(**data,is_verified=False,is_client=True)
         print('fff')
+        Profile.objects.create(user=user)
         self.send_confirmation_email(user)
         return user
 
