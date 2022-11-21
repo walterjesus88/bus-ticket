@@ -20,6 +20,8 @@ from rest_framework_swagger.views import get_swagger_view
 
 endpoints = [
     path('api/', include(('routes.urls', 'route'), namespace='route')),
+    path('api/', include(('users.urls', 'users'), namespace='users')),
+    path('api/', include(('vehicles.urls', 'vehicles'), namespace='vehicles')),
 ]
 
 schema_view = get_swagger_view(title='Bus Tickets API', patterns=endpoints)
@@ -27,5 +29,4 @@ schema_view = get_swagger_view(title='Bus Tickets API', patterns=endpoints)
 urlpatterns = endpoints + [
     #path('admin/', admin.site.urls),
     re_path(r'^$', schema_view),
-    path('', include(('users.urls', 'users'), namespace='users')),
 ]

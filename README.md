@@ -14,3 +14,7 @@ docker-compose up -d
 ```
 
 5. python manage.py migrate authtoken
+
+
+
+#Referencia manytomany https://github.com/CodeEnvironment/django-rest-framework-code/blob/master/school/models.py

@@ -12,6 +12,7 @@ from users.models import User, Profile
 
 #Permissions
 from rest_framework.permissions import (AllowAny, IsAuthenticated)
+from users.permissions import IsAccountOwner
 
 #Serializers
 from users.serializers.users import (UserModelSerializer,UserSignUpSerializer,UserLoginSerializer,AccountVerificationSerializer)
@@ -25,7 +26,15 @@ class UserViewSet(mixins.RetrieveModelMixin,
     serializer_class = UserModelSerializer
     lookup_field = 'username'
 
-    #def get_permissions(self):
+    def get_permissions(self):
+        """Assign permissions based on action."""
+        if self.action in ['signup', 'login', 'verify']:
+            permissions = [AllowAny]
+        elif self.action in ['retrieve', 'update', 'partial_update', 'profile']:
+            permissions = [IsAuthenticated, IsAccountOwner]
+        else:
+            permissions = [IsAuthenticated]
+        return [p() for p in permissions]
 
     @action(detail=False,methods=['post'])
     def signup(self,request):
@@ -62,11 +71,15 @@ class UserViewSet(mixins.RetrieveModelMixin,
     @action(detail=True,methods=['get','put','patch'])
     def profile(self,request,*args,**kwargs):
         """"update profile data"""
-        profile=Profile.objects.get() 
-        queryset = self.get_queryset()
-        a= queryset.values()    
-        print(a)
-        user = get_object_or_404(queryset)        
+
+        user = self.get_object()   
+        print(user.profile)
+        profile = user.profile
+        
+        #profile=Profile.objects.get() 
+        #queryset = self.get_queryset()
+        #a= queryset.values()
+        #user = get_object_or_404(queryset)        
 
         partial = request.method=='PATCH'
         serializer = ProfileModelSerializer(

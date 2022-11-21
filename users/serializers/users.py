@@ -3,7 +3,7 @@ from rest_framework import serializers
 from django.conf import settings
 from django.contrib.auth import password_validation,authenticate
 from users.serializers.profiles import ProfileModelSerializer
-
+#from vehicles.serializers import VehicleModelSerializer
 #Models
 from users.models import User, Profile
 from rest_framework.authtoken.models import Token
@@ -18,6 +18,7 @@ import jwt
 class UserModelSerializer(serializers.ModelSerializer):
     
     profile = ProfileModelSerializer(read_only=True)
+    #vehicles = VehicleModelSerializer(many=True, read_only=True)
     class Meta:
         model= User
         fields = (
@@ -25,8 +26,10 @@ class UserModelSerializer(serializers.ModelSerializer):
             'first_name',
             'last_name',
             'email',
-            'profile'        
+            'profile',
+            #'vehicles'      
         )
+        #extra_kwargs = {'vehicles': {'required': False}}
 
 class UserSignUpSerializer(serializers.Serializer):
     email=serializers.EmailField()
@@ -52,7 +55,7 @@ class UserSignUpSerializer(serializers.Serializer):
     def create(self,data):
         data.pop('password_confirmation')
         user=User.objects.create_user(**data,is_verified=False,is_client=True)
-        print('fff')
+    
         Profile.objects.create(user=user)
         self.send_confirmation_email(user)
         return user
