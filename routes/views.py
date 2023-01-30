@@ -2,12 +2,22 @@ from rest_framework import mixins, status, viewsets
 from rest_framework.response import Response
 from routes.serializers import (RouteSerializer, RouteModelSerializer, CitySerializer, CityModelSerializer)
 from routes.models import Route, City, Stopping
-
+#Permissions
+from rest_framework.permissions import (AllowAny, IsAuthenticated)
 
 class RouteViewSet(mixins.ListModelMixin,
                    mixins.CreateModelMixin,
                    viewsets.GenericViewSet):
     serializer_class = RouteModelSerializer
+
+    def get_permissions(self):
+        """Assign permissions based on action."""
+
+        if self.action in ['Create', 'update']:
+            permissions = [AllowAny]
+        else:
+            permissions = [IsAuthenticated]
+        return [p() for p in permissions]
 
     def get_queryset(self):
         queryset = Route.objects.all()
@@ -37,6 +47,14 @@ class CityViewSet(mixins.ListModelMixin,
         data = CityModelSerializer(city).data
         return Response(data, status=status.HTTP_201_CREATED)
 
+    def get_permissions(self):
+        """Assign permissions based on action."""
+
+        if self.action in ['Create', 'update']:
+            permissions = [AllowAny]
+        else:
+            permissions = [IsAuthenticated]
+        return [p() for p in permissions]
 
 class DemoViewSet(viewsets.GenericViewSet):
     def list(self, request):

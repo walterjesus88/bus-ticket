@@ -9,6 +9,8 @@ class Vehicle(models.Model):
     type = models.CharField(null=True, max_length=255)
     available_seats = models.PositiveSmallIntegerField(default=1)
     passengers = models.ManyToManyField('users.User', related_name='passengers', blank=True)
+    description = models.CharField(null=True, max_length=255)
+    route = models.ForeignKey('routes.Route', on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         """Return username."""

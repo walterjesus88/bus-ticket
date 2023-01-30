@@ -19,7 +19,7 @@ from rest_framework_swagger.views import get_swagger_view
 
 
 endpoints = [
-    path('api/', include(('routes.urls', 'route'), namespace='route')),
+    path('api/', include(('routes.urls', 'routes'), namespace='routes')),
     path('api/', include(('users.urls', 'users'), namespace='users')),
     path('api/', include(('vehicles.urls', 'vehicles'), namespace='vehicles')),
 ]
