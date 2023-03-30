@@ -89,6 +89,12 @@ class UserLoginSerializer(serializers.Serializer):
     email=serializers.EmailField()
     password=serializers.CharField(min_length=8,max_length=64)
 
+    def to_representation(self, instance):
+        return {
+            'id': 'prueba',
+            
+        }
+
     def validate(self,data):
         user=authenticate(username=data['email'],password=data['password'])
         if not user:
@@ -107,6 +113,13 @@ class UserLoginSerializer(serializers.Serializer):
         print(created)
         #import pdb; pdb.set_trace()
         return self.context['user'],token.key
+       
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        # personalizar el valor de ejemplo para la respuesta
+        return data
+
         
 class AccountVerificationSerializer(serializers.Serializer):
     

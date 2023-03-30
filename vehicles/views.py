@@ -4,7 +4,7 @@ from django.shortcuts import render
 from rest_framework import mixins,status,viewsets
 from rest_framework.response import Response
 # Create your views here.
-from vehicles.serializers import VehicleModelSerializer,VehicleSerializer
+from vehicles.serializers import VehicleModelSerializer,VehicleSerializer,VehicleDetailSerializer
 from routes.serializers import RouteModelSerializer
 
 from vehicles.models import Vehicle
@@ -26,14 +26,15 @@ class VehicleViewSet(mixins.ListModelMixin,
     search_fields = ['description','name']
     filter_backends = (filters.SearchFilter,)
     queryset = Vehicle.objects.all()
-    serializer_class= VehicleModelSerializer
+    serializer_class= VehicleSerializer
     lookup_field = 'name'
     
 
     def get_permissions(self):
         """Assign permissions based on action."""
 
-        if self.action in ['Create', 'update']:
+        if self.action in ['Create', 'Update']:
+            print('ff paso por create o updatrs')
             permissions = [AllowAny]
         else:
             permissions = [IsAuthenticated]
@@ -49,6 +50,16 @@ class VehicleViewSet(mixins.ListModelMixin,
     #     data = VehicleModelSerializer(vehicle).data
     #     return Response(data, status=status.HTTP_200_OK)
 
+    def get_serializer_class(self):
+        serializer=self.serializer_class
+        print('paso por esta')
+        if self.action=='retrieve':
+            print('paso retrieve')                     
+            serializer = VehicleDetailSerializer
+        elif self.action=='update':
+            print('paso updates')         
+            serializer = VehicleSerializer
+        return serializer
 
     @action(detail=True,methods=['get','post'])
     def passenger(self,request,*args,**kwargs):
@@ -68,6 +79,7 @@ class VehicleViewSet(mixins.ListModelMixin,
     @action(detail=True,methods=['post','patch'])
     def route(self,request,*args,**kwargs):
         # vehicle = self.get_object()
+        print('estamos en detail true')
         route_id=request.data
         
         print('route_id')

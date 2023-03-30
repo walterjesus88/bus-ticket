@@ -18,12 +18,16 @@ from users.permissions import IsAccountOwner
 from users.serializers.users import (UserModelSerializer,UserSignUpSerializer,UserLoginSerializer,AccountVerificationSerializer)
 from users.serializers.profiles import ProfileModelSerializer
 
+#from .renderers import UserRenderer
+
 class UserViewSet(mixins.RetrieveModelMixin,
                   mixins.UpdateModelMixin,
                   viewsets.GenericViewSet):
     """ User view set """
     queryset = User.objects.filter(is_active=True, is_client=True)
     serializer_class = UserModelSerializer
+    #renderer_class = (UserRenderer,)
+
     lookup_field = 'username'
 
     def get_permissions(self):
@@ -35,20 +39,32 @@ class UserViewSet(mixins.RetrieveModelMixin,
         else:
             permissions = [IsAuthenticated]
         return [p() for p in permissions]
+    
+    def get_serializer_class(self):
+        serializer=self.serializer_class
+       
+        if self.action=='login':            
+            serializer = UserLoginSerializer
+        elif self.action=='signup':         
+            serializer = UserSignUpSerializer
+        return serializer
 
     @action(detail=False,methods=['post'])
     def signup(self,request):
         """User signup"""
         serializer = UserSignUpSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        user = serializer.save()      
-        data= UserModelSerializer(user).data      
+        print('request')  
+        print(request.data) 
+        print(self)
         #import pdb; pdb.set_trace()
+        user = serializer.save()      
+        data= UserModelSerializer(user).data  
         return Response(data, status=status.HTTP_201_CREATED)
 
     @action(detail=False,methods=['post'])
     def login(self,request):
-        """User sign in"""
+        """User loginxs"""
         serializer=UserLoginSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user, token = serializer.save()       
@@ -56,7 +72,7 @@ class UserViewSet(mixins.RetrieveModelMixin,
             'user':UserModelSerializer(user).data,
             'access_token':token
         }
-        return Response(data,status=status.HTTP_201_CREATED)
+        return Response(data,status=status.HTTP_200_OK)
 
     @action(detail=False,methods=['post'])
     def verify(self,request):

@@ -10,3 +10,4 @@ django-environ
 pyjwt==1.7.1
 django-rest-swagger==2.2.0
 django-cors-headers
+drf-yasg

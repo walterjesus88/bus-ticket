@@ -47,7 +47,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'routes',
     'users',
-    'vehicles'
+    'vehicles',
+    'drf_yasg',
 ]
 
 # Email
