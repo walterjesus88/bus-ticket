@@ -21,7 +21,8 @@ from rest_framework import filters
 class VehicleViewSet(mixins.ListModelMixin,
                     mixins.CreateModelMixin,
                     mixins.RetrieveModelMixin,
-                    mixins.UpdateModelMixin,                   
+                    mixins.UpdateModelMixin,
+                    mixins.DestroyModelMixin,                
                     viewsets.GenericViewSet):
     search_fields = ['description','name']
     filter_backends = (filters.SearchFilter,)
@@ -37,7 +38,7 @@ class VehicleViewSet(mixins.ListModelMixin,
             print('ff paso por create o updatrs')
             permissions = [AllowAny]
         else:
-            permissions = [IsAuthenticated]
+            permissions = [AllowAny]#IsAuthenticated
         return [p() for p in permissions]
 
     #@action(detail=False, methods=['post'])
@@ -52,9 +53,8 @@ class VehicleViewSet(mixins.ListModelMixin,
 
     def get_serializer_class(self):
         serializer=self.serializer_class
-        print('paso por esta')
-        if self.action=='retrieve':
-            print('paso retrieve')                     
+    
+        if self.action=='retrieve':                            
             serializer = VehicleDetailSerializer
         elif self.action=='update':
             print('paso updates')         
